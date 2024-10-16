@@ -6,7 +6,24 @@ using System.Threading.Tasks;
 
 namespace LSP
 {
-    public class LSPCorrect
+    public abstract class Bird
     {
+        public abstract void Move();
+    }
+
+    public class FlyingBird: Bird
+    {
+        public override void Move()
+        {
+            Console.WriteLine("Flying");
+        }
+    }
+
+    public class Penguin:Bird
+    {
+        public override void Move()
+        {
+           Console.WriteLine("swimming");
+        }
     }
 }

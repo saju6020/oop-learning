@@ -1,55 +1,111 @@
-﻿// Abstract Factory
-interface IUIFactory
+﻿public abstract class CarFactory
 {
-    IButton CreateButton();
-    ICheckbox CreateCheckbox();
+    public abstract PetrolCar CreatePetrolCar();
+    public abstract DieselCar CreateDieselCar();
 }
 
-// Concrete Factory 1
-class WindowsFactory : IUIFactory
+public class FerrariFactory : CarFactory
 {
-    public IButton CreateButton() => new WindowsButton();
-    public ICheckbox CreateCheckbox() => new WindowsCheckbox();
+    public override DieselCar CreateDieselCar()
+    {
+        return new FerrariDiesel();
+    }
+
+    public override PetrolCar CreatePetrolCar()
+    {
+        return new FerrariPetrol();
+    }
 }
 
-// Concrete Factory 2
-class MacFactory : IUIFactory
+public class VolkswagenFactory : CarFactory
 {
-    public IButton CreateButton() => new MacButton();
-    public ICheckbox CreateCheckbox() => new MacCheckbox();
+    public override DieselCar CreateDieselCar()
+    {
+        return new VolkswagenDiesel();
+    }
+
+    public override PetrolCar CreatePetrolCar()
+    {
+        return new VolkswagenPetrol();
+    }
 }
 
-// Abstract Product A
-interface IButton
+public abstract class PetrolCar
 {
-    void Render();
+    public abstract void AssembleSeats();
 }
 
-// Abstract Product B
-interface ICheckbox
+public class FerrariPetrol : PetrolCar
 {
-    void Render();
+    public override void AssembleSeats()
+    {
+        Console.WriteLine("Ferrari petrol car seats assembled.");
+    }
 }
 
-// Concrete Product A1
-class WindowsButton : IButton
+public class VolkswagenPetrol : PetrolCar
 {
-    public void Render() => Console.WriteLine("Rendering Windows Button");
+    public override void AssembleSeats()
+    {
+        Console.WriteLine("Volkswagen petrol car seats assembled.");
+    }
 }
 
-// Concrete Product B1
-class WindowsCheckbox : ICheckbox
+public abstract class DieselCar
 {
-    public void Render() => Console.WriteLine("Rendering Windows Checkbox");
+    public abstract void AssembleDieselEngine();
 }
 
-// Client
+public class FerrariDiesel : DieselCar
+{
+    public override void AssembleDieselEngine()
+    {
+        Console.WriteLine("Ferrari diesel engine assembled.");
+    }
+}
+
+public class VolkswagenDiesel : DieselCar
+{
+    public override void AssembleDieselEngine()
+    {
+        Console.WriteLine("Volkswagen diesel engine assembled.");
+    }
+}
+
+public class Client
+{
+    private readonly CarFactory factory;
+
+    public Client(CarFactory factory)
+    {
+        this.factory = factory;
+    }
+
+    public void CreatePetrolCar()
+    {
+        var petrol = factory.CreatePetrolCar();
+        petrol.AssembleSeats();
+    }
+
+    public void CreateDieselCar()
+    {
+        var diesel = factory.CreateDieselCar();
+        diesel.AssembleDieselEngine();
+    }
+}
+
 class Program
 {
-    static void Main()
+    static void Main(string[] args)
     {
-        IUIFactory factory = new WindowsFactory();
-        IButton button = factory.CreateButton();
-        button.Render();
+        CarFactory ferrariFactory = new FerrariFactory();
+        Client ferrariClient = new Client(ferrariFactory);
+        ferrariClient.CreatePetrolCar();
+        ferrariClient.CreateDieselCar();
+
+        CarFactory volkswagenFactory = new VolkswagenFactory();
+        Client volkswagenClient = new Client(volkswagenFactory);
+        volkswagenClient.CreatePetrolCar();
+        volkswagenClient.CreateDieselCar();
     }
 }

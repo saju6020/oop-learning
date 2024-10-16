@@ -1,29 +1,82 @@
-﻿abstract class Shape
+﻿using System;
+
+namespace PrototypePattern
 {
-    public int X { get; set; }
-    public int Y { get; set; }
-
-    public abstract Shape Clone();
-}
-
-class Rectangle : Shape
-{
-    public int Width { get; set; }
-    public int Height { get; set; }
-
-    public override Shape Clone()
+    // Prototype interface for cloning
+    public interface IShape : ICloneable
     {
-        return (Shape)this.MemberwiseClone();
+        string GetDetails();
     }
-}
 
-// Client
-class Program
-{
-    static void Main()
+    // Concrete Prototype: Circle
+    public class Circle : IShape
     {
-        var rect1 = new Rectangle { X = 10, Y = 20, Width = 30, Height = 40 };
-        var rect2 = (Rectangle)rect1.Clone();
-        Console.WriteLine($"Rectangle cloned: X={rect2.X}, Y={rect2.Y}, Width={rect2.Width}, Height={rect2.Height}");
+        public int Radius { get; set; }
+
+        public Circle(int radius)
+        {
+            Radius = radius;
+        }
+
+        // Clone method from ICloneable interface
+        public object Clone()
+        {
+            return new Circle(this.Radius); // shallow copy, deep copy not needed since int is a value type
+        }
+
+        public string GetDetails()
+        {
+            return $"Circle with Radius: {Radius}";
+        }
+    }
+
+    // Concrete Prototype: Square
+    public class Square : IShape
+    {
+        public int SideLength { get; set; }
+
+        public Square(int sideLength)
+        {
+            SideLength = sideLength;
+        }
+
+        // Clone method from ICloneable interface
+        public object Clone()
+        {
+            return new Square(this.SideLength);
+        }
+
+        public string GetDetails()
+        {
+            return $"Square with Side Length: {SideLength}";
+        }
+    }
+
+    // Client code
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            // Creating a Circle prototype
+            Circle originalCircle = new Circle(5);
+            Console.WriteLine("Original: " + originalCircle.GetDetails());
+
+            // Cloning the Circle
+            Circle clonedCircle = (Circle)originalCircle.Clone();
+            Console.WriteLine("Cloned: " + clonedCircle.GetDetails());
+
+            // Creating a Square prototype
+            Square originalSquare = new Square(10);
+            Console.WriteLine("Original: " + originalSquare.GetDetails());
+
+            // Cloning the Square
+            Square clonedSquare = (Square)originalSquare.Clone();
+            Console.WriteLine("Cloned: " + clonedSquare.GetDetails());
+
+            // Modifying the cloned object
+            clonedCircle.Radius = 8;
+            Console.WriteLine("Modified Cloned Circle: " + clonedCircle.GetDetails());
+            Console.WriteLine("Original Circle after modification: " + originalCircle.GetDetails());
+        }
     }
 }

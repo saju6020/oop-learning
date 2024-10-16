@@ -1,41 +1,113 @@
-﻿// Factory Method
-abstract class Document
-{
-    public abstract void Print();
-}
+﻿using System;
 
-class Report : Document
+namespace DotNet_Design_Patterns.Chapter3.FactoryMethod
 {
-    public override void Print() => Console.WriteLine("Printing a Report");
-}
-
-class Invoice : Document
-{
-    public override void Print() => Console.WriteLine("Printing an Invoice");
-}
-
-abstract class Creator
-{
-    public abstract Document CreateDocument();
-}
-
-class ReportCreator : Creator
-{
-    public override Document CreateDocument() => new Report();
-}
-
-class InvoiceCreator : Creator
-{
-    public override Document CreateDocument() => new Invoice();
-}
-
-// Client
-class Program
-{
-    static void Main()
+    // Product Interface
+    public abstract class Car
     {
-        Creator creator = new ReportCreator();
-        Document doc = creator.CreateDocument();
-        doc.Print();
+        public abstract void Assemble();
+    }
+
+    // Concrete Products
+    public class FerrariPetrol : Car
+    {
+        public override void Assemble()
+        {
+            Console.WriteLine("Ferrari petrol car assembled.");
+        }
+    }
+
+    public class FerrariDiesel : Car
+    {
+        public override void Assemble()
+        {
+            Console.WriteLine("Ferrari diesel car assembled.");
+        }
+    }
+
+    public class VolkswagenPetrol : Car
+    {
+        public override void Assemble()
+        {
+            Console.WriteLine("Volkswagen petrol car assembled.");
+        }
+    }
+
+    public class VolkswagenDiesel : Car
+    {
+        public override void Assemble()
+        {
+            Console.WriteLine("Volkswagen diesel car assembled.");
+        }
+    }
+
+    // Creator (Factory Method)
+    public abstract class CarFactory
+    {
+        public abstract Car CreateCar();
+    }
+
+    // Concrete Creators
+    public class FerrariPetrolFactory : CarFactory
+    {
+        public override Car CreateCar()
+        {
+            return new FerrariPetrol();
+        }
+    }
+
+    public class FerrariDieselFactory : CarFactory
+    {
+        public override Car CreateCar()
+        {
+            return new FerrariDiesel();
+        }
+    }
+
+    public class VolkswagenPetrolFactory : CarFactory
+    {
+        public override Car CreateCar()
+        {
+            return new VolkswagenPetrol();
+        }
+    }
+
+    public class VolkswagenDieselFactory : CarFactory
+    {
+        public override Car CreateCar()
+        {
+            return new VolkswagenDiesel();
+        }
+    }
+
+    // Client Code
+    public class Client
+    {
+        private readonly CarFactory factory;
+
+        public Client(CarFactory factory)
+        {
+            this.factory = factory;
+        }
+
+        public void AssembleCar()
+        {
+            Car car = factory.CreateCar();
+            car.Assemble();
+        }
+    }
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            CarFactory ferrariPetrolFactory = new FerrariPetrolFactory();
+            Client client1 = new Client(ferrariPetrolFactory);
+            client1.AssembleCar();
+
+            CarFactory volkswagenDieselFactory = new VolkswagenDieselFactory();
+            Client client2 = new Client(volkswagenDieselFactory);
+            client2.AssembleCar();
+        }
     }
 }

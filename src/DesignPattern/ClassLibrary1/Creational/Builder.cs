@@ -1,50 +1,57 @@
-﻿class Pizza
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace DotNet_Design_Patterns.Chapter3.Builder
 {
-    public string Dough { get; set; }
-    public string Sauce { get; set; }
-    public string Topping { get; set; }
-
-    public void Display() =>
-        Console.WriteLine($"Pizza with {Dough} dough, {Sauce} sauce, and {Topping} topping.");
-}
-
-class PizzaBuilder
-{
-    private Pizza pizza;
-
-    public PizzaBuilder() => pizza = new Pizza();
-
-    public PizzaBuilder AddDough(string dough)
+    public class CellPhone
     {
-        pizza.Dough = dough;
-        return this;
+        public string CameraResolution { get; set; }
+        public string MonitorSize { get; set; }
+        public string BodyMaterial { get; set; }
+        public string OSName { get; set; }
+    }
+    public interface ICellPhoneBuilder
+    {
+        public CellPhone Phone { get; }
+        void BuildMonitor();
+        void BuildBody();
+        void BuildCamera();
+        void PrepareOS();
     }
 
-    public PizzaBuilder AddSauce(string sauce)
+    public class Apple : ICellPhoneBuilder
     {
-        pizza.Sauce = sauce;
-        return this;
+        public CellPhone Phone { get; private set; }
+        public Apple() => Phone = new CellPhone();
+        public void BuildBody() => Phone.BodyMaterial = "Titanium";
+        public void BuildCamera() => Phone.CameraResolution = "10 MP";
+        public void BuildMonitor() => Phone.MonitorSize = "10 Inch";
+        public void PrepareOS() => Phone.OSName = "iOS";
     }
-
-    public PizzaBuilder AddTopping(string topping)
+    public class Samsung : ICellPhoneBuilder
     {
-        pizza.Topping = topping;
-        return this;
+        public CellPhone Phone { get; private set; }
+        public Samsung() => Phone = new CellPhone();
+        public void BuildBody() => Phone.BodyMaterial = "Aluminum";
+        public void BuildCamera() => Phone.CameraResolution = "12 MP";
+        public void BuildMonitor() => Phone.MonitorSize = "9.8 Inch";
+        public void PrepareOS() => Phone.OSName = "Android 10";
     }
-
-    public Pizza Build() => pizza;
-}
-
-// Client
-class Program
-{
-    static void Main()
+    public class CellPhoneDirector
     {
-        var pizza = new PizzaBuilder()
-                        .AddDough("Thick")
-                        .AddSauce("Tomato")
-                        .AddTopping("Pepperoni")
-                        .Build();
-        pizza.Display();
+        private ICellPhoneBuilder builder;
+        public CellPhoneDirector(ICellPhoneBuilder builder) => this.builder = builder;
+
+        public CellPhone Construct()
+        {
+            builder.BuildBody();
+            builder.BuildMonitor();
+            builder.BuildCamera();
+            builder.PrepareOS();
+            return builder.Phone;
+        }
     }
 }
